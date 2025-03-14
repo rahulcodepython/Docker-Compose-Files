@@ -1,0 +1,57 @@
+networks:
+    app_network:
+        name: app_network
+        driver: bridge
+
+services:
+    backend:
+        image: rahulcodepython/password-manager-backend
+
+        container_name: password-manager-backend-app
+
+        restart: always
+
+        volumes:
+            - staticfiles:/app/staticfiles
+
+        networks:
+            - app_network
+
+        command:
+            ["gunicorn", "--bind", "0.0.0.0:8000", "server.wsgi:application"]
+
+    frontend:
+        image: rahulcodepython/password-manager-frontend
+
+        container_name: password-manager-frontend-app
+
+        restart: always
+
+        networks:
+            - app_network
+
+        depends_on:
+            - backend
+
+        command: ["node", "server.js"]
+
+    nginx:
+        image: rahulcodepython/password-manager-nginx
+
+        container_name: password-manager-nginx-app
+
+        ports:
+            - 80:80
+
+        networks:
+            - app_network
+
+        volumes:
+            - staticfiles:/app/static
+
+        depends_on:
+            - backend
+            - frontend
+
+volumes:
+    staticfiles:

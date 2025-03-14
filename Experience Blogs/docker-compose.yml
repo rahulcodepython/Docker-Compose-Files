@@ -1,0 +1,10 @@
+services:
+    frontend:
+        image: rahulcodepython/experience-blogs:latest
+
+        container_name: blog
+
+        ports:
+            - "3000:3000"
+
+        restart: always

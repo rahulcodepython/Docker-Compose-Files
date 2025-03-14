@@ -1,0 +1,98 @@
+networks:
+    app_network:
+        driver: bridge
+
+services:
+    db:
+        image: postgres
+
+        container_name: libom-db-app
+
+        restart: always
+
+        volumes:
+            - ./data:/var/lib/postgresql/data
+
+        ports:
+            - "5432:5432" # Ensure no other service is running on this port
+
+        environment:
+            - POSTGRES_DB=postgres
+            - POSTGRES_USER=rahul
+            - POSTGRES_PASSWORD=admin
+
+        networks:
+            - app_network
+
+    adminer:
+        image: adminer
+
+        container_name: libom-adminer-app
+
+        restart: always
+
+        ports:
+            - "8080:8080"
+
+        networks:
+            - app_network
+
+        depends_on:
+            - db
+
+    backend:
+        image: rahulcodepython/libom-backend
+
+        container_name: libom-backend-app
+
+        restart: always
+
+        volumes:
+            - staticfiles:/app/static
+
+        ports:
+            - "8000:8000"
+
+        depends_on:
+            - db
+
+        networks:
+            - app_network
+
+        command: gunicorn backend.wsgi:application --bind 0.0.0.0:8000
+
+    frontend:
+        image: rahulcodepython/libom-frontend
+
+        container_name: libom-frontend-app
+
+        restart: always
+
+        networks:
+            - app_network
+
+        ports:
+            - "3000:3000"
+
+        command: ["node", "server.js"]
+
+    nginx:
+        image: rahulcodepython/libom-nginx
+
+        container_name: libom-nginx-app
+
+        ports:
+            - 80:80
+
+        networks:
+            - app_network
+
+        volumes:
+            - staticfiles:/app/static
+
+        depends_on:
+            - backend
+            - frontend
+
+volumes:
+    staticfiles:

@@ -1,0 +1,27 @@
+services:
+    backend:
+        image: multiplayer-chess-backend
+        container_name: multiplayer-chess-backend
+        ports:
+            - "8080:8080"
+        networks:
+            - app-network
+
+    frontend:
+        image: multiplayer-chess-frontend
+        container_name: multiplayer-chess-frontend
+        ports:
+            - "4173:4173"
+        networks:
+            - app-network
+    nginx:
+        image: multiplayer-chess-nginx
+        container_name: multiplayer-chess-nginx
+        ports:
+            - "80:80"
+        networks:
+            - app-network
+
+networks:
+    app-network:
+        driver: bridge
