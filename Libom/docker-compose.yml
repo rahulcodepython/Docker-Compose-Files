@@ -13,8 +13,8 @@ services:
         volumes:
             - ./data:/var/lib/postgresql/data
 
-        ports:
-            - "5432:5432" # Ensure no other service is running on this port
+        # ports:
+        #     - "5432:5432" # Ensure no other service is running on this port
 
         environment:
             - POSTGRES_DB=postgres
@@ -23,22 +23,6 @@ services:
 
         networks:
             - app_network
-
-    adminer:
-        image: adminer
-
-        container_name: libom-adminer-app
-
-        restart: always
-
-        ports:
-            - "8080:8080"
-
-        networks:
-            - app_network
-
-        depends_on:
-            - db
 
     backend:
         image: rahulcodepython/libom-backend
@@ -50,8 +34,8 @@ services:
         volumes:
             - staticfiles:/app/static
 
-        ports:
-            - "8000:8000"
+        # ports:
+        #     - "8000:8000"
 
         depends_on:
             - db
@@ -59,7 +43,7 @@ services:
         networks:
             - app_network
 
-        command: gunicorn backend.wsgi:application --bind 0.0.0.0:8000
+        # command: gunicorn backend.wsgi:application --bind 0.0.0.0:8000
 
     frontend:
         image: rahulcodepython/libom-frontend
@@ -71,10 +55,10 @@ services:
         networks:
             - app_network
 
-        ports:
-            - "3000:3000"
+        # ports:
+        #     - "3000:3000"
 
-        command: ["node", "server.js"]
+        # command: ["node", "server.js"]
 
     nginx:
         image: rahulcodepython/libom-nginx
