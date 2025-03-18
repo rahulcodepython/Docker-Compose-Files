@@ -8,7 +8,7 @@ services:
 
         container_name: libom-db-app
 
-        restart: always
+        restart: unless-stopped
 
         volumes:
             - ./data:/var/lib/postgresql/data
@@ -29,13 +29,10 @@ services:
 
         container_name: libom-backend-app
 
-        restart: always
+        restart: unless-stopped
 
         volumes:
             - staticfiles:/app/static
-
-        # ports:
-        #     - "8000:8000"
 
         depends_on:
             - db
@@ -43,27 +40,22 @@ services:
         networks:
             - app_network
 
-        # command: gunicorn backend.wsgi:application --bind 0.0.0.0:8000
-
     frontend:
         image: rahulcodepython/libom-frontend
 
         container_name: libom-frontend-app
 
-        restart: always
+        restart: unless-stopped
 
         networks:
             - app_network
-
-        # ports:
-        #     - "3000:3000"
-
-        # command: ["node", "server.js"]
 
     nginx:
         image: rahulcodepython/libom-nginx
 
         container_name: libom-nginx-app
+
+        restart: unless-stopped
 
         ports:
             - 80:80

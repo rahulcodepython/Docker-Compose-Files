@@ -9,7 +9,7 @@ services:
 
         container_name: password-manager-backend-app
 
-        restart: always
+        restart: unless-stopped
 
         volumes:
             - staticfiles:/app/staticfiles
@@ -17,23 +17,18 @@ services:
         networks:
             - app_network
 
-        command:
-            ["gunicorn", "--bind", "0.0.0.0:8000", "server.wsgi:application"]
-
     frontend:
         image: rahulcodepython/password-manager-frontend
 
         container_name: password-manager-frontend-app
 
-        restart: always
+        restart: unless-stopped
 
         networks:
             - app_network
 
         depends_on:
             - backend
-
-        command: ["node", "server.js"]
 
     nginx:
         image: rahulcodepython/password-manager-nginx
@@ -45,6 +40,8 @@ services:
 
         networks:
             - app_network
+
+        restart: unless-stopped
 
         volumes:
             - staticfiles:/app/static
